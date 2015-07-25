@@ -7,7 +7,8 @@ molecular_dictionary = {
     'C':12,
     'Na':200
     }
-new = 'ch3ch2(ch2)4ch2(ch)3(ch2)4(Na)4Na2'
+#new = 'ch3ch2(ch2)4ch2(ch)3(ch2)4(Na)4Na2'
+new = raw_input('input first chemical formula: ')
 new_maliable = new
 answer = 0
 
