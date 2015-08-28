@@ -1,22 +1,14 @@
 import re
 
 molecular_dictionary ={
-  "H":	1.00794,
   "He":	4.002602,
   "Li":	6.941,
   "Be":	9.012182,
-  "B":	10.811,
-  "C":	12.011,
-  "N":	14.00674,
-  "O":	15.9994,
-  "F":	18.9984032,
   "Ne":	20.1797,
   "Na":	22.989768,
   "Mg":	24.3050,
   "Al":	26.981539,
   "Si":	28.0855,
-  "P":	30.973762,
-  "S":	32.066,
   "Cl":	35.4527,
   "Ar":	39.948,
   "K":	39.0983,
@@ -53,7 +45,6 @@ molecular_dictionary ={
   "Sn":	118.710,
   "Sb":	121.757,
   "Te":	127.60,
-  "I":	126.90447,
   "Xe":	131.29,
   "Cs":	132.90543,
   "Ba":	137.327,
@@ -110,51 +101,85 @@ molecular_dictionary ={
   "Bh":	262,
   "Hs":	265,
   "Mt":	266,
+  "N": 14.00674,
+  "B": 10.811,
+  "C": 12.011,
+  "O": 15.9994,
+  "F": 18.9984032,
+  "I": 126.90447,
+  "S": 32.066,
+  "P": 30.973762,
+  "H":	1.00794,
 }
-#new = 'ch3ch2(ch2)4ch2(ch)3(ch2)4(Na)4Na2'
-new = raw_input('input first chemical formula: ')
-new_maliable = new
-answer = 0
-
-# Seperate all bracketed groups from formula
-myRegEx = re.compile(r"(\()(\w*)(\))(\d*)",re.I)
-myMatches = myRegEx.findall(new)
 
 
-print myMatches
+print 'Please Print Molecular Formulas with correct cases e.g CH3, NaCl'
 
-# Add bracketed groups into formula again, removing original entries
-for i in myMatches:
-    for j in range(int(i[3])):
-        new_maliable = new_maliable + i[1]
-    new_maliable = new_maliable.replace(i[0] + i[1] + i[2] + i[3], '')
-listed_new = list(new_maliable)
 
-# Match letters to corresponding dictionary values
-# loop through each letter and add value to answer variable
-str_of_list = ''.join(listed_new)
-new_reg = "[A-Z][a-z]?\d*"
-the_test = re.findall(new_reg, str_of_list)
-print the_test
-for i,j in enumerate(listed_new):
-    if j.isdigit() == True:
-        for m in range(int(j)):
-            answer += molecular_dictionary[listed_new[i-1]]
-            
-    else:
-        if j in molecular_dictionary:
-            answer += molecular_dictionary[j]
-
-    
+class Compound:
+    def __init__(self):
+        self.mw = 0
+        self.formula = raw_input('Enter compound iupac name: ')
+        self.stociometric = input('Enter stociometric value of compound in equation: ')
+        self.mw_calc()
+    def mw_calc(self):
+        new_maliable = self.formula
         
-print answer
-print new
-print new_maliable
+        #### Seperate all bracketed groups from formula
+        myRegEx = re.compile(r"(\()(\w*)(\))(\d*)",re.I)
+        myMatches = myRegEx.findall(self.formula)
+
+        #### Add bracketed groups into formula again, removing original entries
+        for i in myMatches:
+            for j in range(int(i[3])):
+                new_maliable = new_maliable + i[1]
+            new_maliable = new_maliable.replace(i[0] + i[1] + i[2] + i[3], '')
+        listed_new = list(new_maliable)
+
+        #### Match letters to corresponding dictionary values
+        #### loop through each letter and add value to answer variable
+        for i,j in enumerate(listed_new):
+            if j.isdigit() == True:
+                for m in range(int(j)):
+                    self.mw += molecular_dictionary[listed_new[i-1]]
+                
+            else:
+                if j in molecular_dictionary:
+                    self.mw += molecular_dictionary[j]
+
+
+class Reactant(Compound):
+    def __init__(self):
+        Compound.__init__(self)
+        self.weight = input('Enter amount of compound used in grams: ')
+        self.moles = self.weight / self.mw
 
         
+class Product(Compound):
+    def __init__(self):
+        Compound.__init__(self)
+    def calculation(self, name1, name2):
+        self.outcome1 = (name1.weight * (1/name1.mw) * (name1.stociometric / self.stociometric) * (self.mw))
+        self.outcome2 = (name2.weight * (1/name2.mw) * (name2.stociometric / self.stociometric) * (self.mw))
+        if self.outcome1 < self.outcome2:
+            print name1.formula + ' is the limiting reagent'
+            self.theoretical_yield = (name1.weight * (1/name1.mw) * (self.stociometric/name1.stociometric) * (self.mw))
+            print 'Theoretical Yield = ' + str(self.theoretical_yield) + 'g ' + self.formula
+        elif self.outcome1 > self.outcome2:
+            print name2.formula + ' is the limiting reagent'
+            self.theoretical_yield = (name2.weight * (1/name2.mw) * (self.stociometric/name2.stociometric) * (self.mw))
+            print 'Theoretical Yield = ' + str(self.theoretical_yield) + 'g ' + self.formula
+
+        else:
+            print 'Reactants imbalanced'
+
+        
+def main():
+    compound1 = Reactant()
+    compound2 = Reactant()
+    product = Product()
+    product.calculation(compound1, compound2)
+
+main()
 
 
-
-
-
-    
