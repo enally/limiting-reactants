@@ -113,61 +113,61 @@ molecular_dictionary ={
 }
 
 
-print 'Please Print Molecular Formulas with correct cases e.g CH3, NaCl'
+print '\nPlease Print Molecular Formulas with correct cases e.g CH3, NaCl\n'
 
 
 class Compound:
     def __init__(self):
-        self.mw = 0
+        self.molecular_weight= 0
         self.formula = raw_input('Enter compound iupac name: ')
         self.stociometric = input('Enter stociometric value of compound in equation: ')
         self.mw_calc()
     def mw_calc(self):
-        new_maliable = self.formula
+        alterable_formula = self.formula
         
         #### Seperate all bracketed groups from formula
-        myRegEx = re.compile(r"(\()(\w*)(\))(\d*)",re.I)
-        myMatches = myRegEx.findall(self.formula)
+        RegExValue = re.compile(r"(\()(\w*)(\))(\d*)",re.I)
+        myMatches = RegExValue.findall(self.formula)
 
         #### Add bracketed groups into formula again, removing original entries
         for i in myMatches:
             for j in range(int(i[3])):
-                new_maliable = new_maliable + i[1]
-            new_maliable = new_maliable.replace(i[0] + i[1] + i[2] + i[3], '')
-        listed_new = list(new_maliable)
+                alterable_formula = alterable_formula + i[1]
+            alterable_formula = alterable_formula.replace(i[0] + i[1] + i[2] + i[3], '')
+        formula_list = list(alterable_formula)
 
         #### Match letters to corresponding dictionary values
         #### loop through each letter and add value to answer variable
-        for i,j in enumerate(listed_new):
+        for i,j in enumerate(formula_list):
             if j.isdigit() == True:
                 for m in range(int(j)):
-                    self.mw += molecular_dictionary[listed_new[i-1]]
+                    self.molecular_weight+= molecular_dictionary[formula_list[i-1]]
                 
             else:
                 if j in molecular_dictionary:
-                    self.mw += molecular_dictionary[j]
+                    self.molecular_weight+= molecular_dictionary[j]
 
 
 class Reactant(Compound):
     def __init__(self):
         Compound.__init__(self)
         self.weight = input('Enter amount of compound used in grams: ')
-        self.moles = self.weight / self.mw
+        self.moles = self.weight / self.molecular_weight
 
         
 class Product(Compound):
     def __init__(self):
         Compound.__init__(self)
     def calculation(self, name1, name2):
-        self.outcome1 = (name1.weight * (1/name1.mw) * (name1.stociometric / self.stociometric) * (self.mw))
-        self.outcome2 = (name2.weight * (1/name2.mw) * (name2.stociometric / self.stociometric) * (self.mw))
+        self.outcome1 = (name1.weight * (1/name1.molecular_weight) * (name1.stociometric / self.stociometric) * (self.molecular_weight))
+        self.outcome2 = (name2.weight * (1/name2.molecular_weight) * (name2.stociometric / self.stociometric) * (self.molecular_weight))
         if self.outcome1 < self.outcome2:
             print name1.formula + ' is the limiting reagent'
-            self.theoretical_yield = (name1.weight * (1/name1.mw) * (self.stociometric/name1.stociometric) * (self.mw))
+            self.theoretical_yield = (name1.weight * (1/name1.molecular_weight) * (self.stociometric/name1.stociometric) * (self.molecular_weight))
             print 'Theoretical Yield = ' + str(self.theoretical_yield) + 'g ' + self.formula
         elif self.outcome1 > self.outcome2:
             print name2.formula + ' is the limiting reagent'
-            self.theoretical_yield = (name2.weight * (1/name2.mw) * (self.stociometric/name2.stociometric) * (self.mw))
+            self.theoretical_yield = (name2.weight * (1/name2.molecular_weight) * (self.stociometric/name2.stociometric) * (self.molecular_weight))
             print 'Theoretical Yield = ' + str(self.theoretical_yield) + 'g ' + self.formula
 
         else:
@@ -175,11 +175,15 @@ class Product(Compound):
 
         
 def main():
+    print 'Input Data for Reactant 1\n'
     compound1 = Reactant()
+    print '\nInput Data for Reactant 2\n'
     compound2 = Reactant()
+    print '\nInput Data for Product\n'
     product = Product()
     product.calculation(compound1, compound2)
 
-main()
+if __name__ == "__main__":
+    main()
 
 
